@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SecureBank — Create New User Account</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="auth-page">
+  <div class="auth-card" style="max-width: 500px;">
+    <div class="auth-header">
+      <div class="brand-logo" style="justify-content: center; color: var(--color-primary);">
+        <span class="brand-icon">🏦</span>
+        <span>SecureBank</span>
+      </div>
+      <h1>Create New Account</h1>
+      <p class="auth-sub">Register as a new user to access SecureBank services</p>
+    </div>
+
+    <!-- Feedback Message Box -->
+    <div id="alert-box" class="alert alert-danger" style="display: none;" role="alert"></div>
+
+    <form id="register-form" novalidate>
+      <div class="form-group">
+        <label for="fullName" class="form-label">Full Name</label>
+        <input type="text" id="fullName" class="form-control" placeholder="e.g. John Doe" required autocomplete="name">
+      </div>
+
+      <div class="grid-2" style="gap: 12px; margin-bottom: 0;">
+        <div class="form-group">
+          <label for="username" class="form-label">Username</label>
+          <input type="text" id="username" class="form-control" placeholder="e.g. john" required autocomplete="username">
+          <div class="form-hint">At least 4 characters</div>
+        </div>
+
+        <div class="form-group">
+          <label for="email" class="form-label">Email Address</label>
+          <input type="email" id="email" class="form-control" placeholder="e.g. john@example.com" required autocomplete="email">
+        </div>
+      </div>
+
+      <div class="grid-2" style="gap: 12px; margin-bottom: 0;">
+        <div class="form-group">
+          <label for="password" class="form-label">Password</label>
+          <div style="position: relative;">
+            <input type="password" id="password" class="form-control" placeholder="At least 6 chars" required autocomplete="new-password" style="padding-right: 36px;">
+            <button type="button" id="btn-toggle-pwd" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 13px; color: var(--text-muted);" title="Toggle password">👁️</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="pin" class="form-label">4-6 Digit Transaction PIN</label>
+          <input type="password" id="pin" class="form-control" placeholder="e.g. 1234" maxlength="6" required autocomplete="off">
+          <div class="form-hint">For withdrawal/transfers</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="phoneNumber" class="form-label">Phone Number (Optional)</label>
+        <input type="tel" id="phoneNumber" class="form-control" placeholder="e.g. 9876543210" autocomplete="tel">
+      </div>
+
+      <button type="submit" id="btn-submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;">
+        <span id="btn-spinner" class="spinner" style="display: none;"></span>
+        <span id="btn-text">Create Account & Sign In</span>
+      </button>
+    </form>
+
+    <div style="margin-top: 20px; text-align: center; font-size: 14px;">
+      <span class="text-muted">Already have an account?</span>
+      <a href="index.html" class="font-bold" style="margin-left: 6px;">Sign In here</a>
+    </div>
+
+    <div style="margin-top: 24px; text-align: center; font-size: 13px; color: var(--text-muted);">
+      <p>SecureBank System • Spring Boot & MySQL</p>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/register.js"></script>
+</body>
+</html>

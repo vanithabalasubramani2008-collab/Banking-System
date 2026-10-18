@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SecureBank — Portal Login</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="auth-page">
+  <div class="auth-card">
+    <div class="auth-header">
+      <div class="brand-logo" style="justify-content: center; color: var(--color-primary);">
+        <span class="brand-icon">🏦</span>
+        <span>SecureBank</span>
+      </div>
+      <h1>Account Sign In</h1>
+      <p class="auth-sub">Enter your credentials to access your banking dashboard</p>
+    </div>
+
+    <!-- Alert Box for feedback -->
+    <div id="alert-box" class="alert alert-danger" style="display: none;" role="alert"></div>
+
+    <form id="login-form" novalidate>
+      <div class="form-group">
+        <label for="username" class="form-label">Username</label>
+        <input type="text" id="username" class="form-control" placeholder="e.g. john" required autocomplete="username">
+        <div class="form-hint">Username registered with your bank account</div>
+      </div>
+
+      <div class="form-group">
+        <label for="password" class="form-label">Password</label>
+        <div style="position: relative;">
+          <input type="password" id="password" class="form-control" placeholder="Enter your password" required autocomplete="current-password" style="padding-right: 40px;">
+          <button type="button" id="btn-toggle-pwd" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 14px; color: var(--text-muted);" title="Toggle password visibility">👁️</button>
+        </div>
+      </div>
+
+      <button type="submit" id="btn-submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;">
+        <span id="btn-spinner" class="spinner" style="display: none;"></span>
+        <span id="btn-text">Log In Securely</span>
+      </button>
+    </form>
+
+    <div style="margin-top: 20px; text-align: center; font-size: 14px;">
+      <span class="text-muted">Don't have an account yet?</span>
+      <a href="register.html" class="font-bold" style="margin-left: 6px;">Create Account</a>
+    </div>
+
+    <div style="margin-top: 24px; text-align: center; font-size: 13px; color: var(--text-muted);">
+      <p>SecureBank System • Spring Boot & MySQL</p>
+      <p><small>3 failed password attempts will automatically lock your account.</small></p>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+</body>
+</html>

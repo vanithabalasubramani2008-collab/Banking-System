@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SecureBank — Dashboard</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div id="demo-banner" class="demo-banner"></div>
+
+  <div class="mobile-header">
+    <div class="brand-logo">
+      <span class="brand-icon">🏦</span>
+      <span>SecureBank</span>
+    </div>
+    <button id="menu-toggle" class="menu-toggle" aria-label="Toggle navigation menu">☰</button>
+  </div>
+
+  <div class="app-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="brand-logo">
+          <span class="brand-icon">🏦</span>
+          <span>SecureBank</span>
+        </div>
+      </div>
+      <ul class="nav-menu">
+        <li class="nav-item"><a href="dashboard.html" class="nav-link" data-page="dashboard"><span>📊</span> Dashboard</a></li>
+        <li class="nav-item"><a href="accounts.html" class="nav-link" data-page="accounts"><span>📑</span> Open Account</a></li>
+        <li class="nav-item"><a href="deposit.html" class="nav-link" data-page="deposit"><span>📥</span> Deposit</a></li>
+        <li class="nav-item"><a href="withdraw.html" class="nav-link" data-page="withdraw"><span>📤</span> Withdraw</a></li>
+        <li class="nav-item"><a href="transfer.html" class="nav-link" data-page="transfer"><span>🔄</span> Transfer Funds</a></li>
+        <li class="nav-item"><a href="transactions.html" class="nav-link" data-page="transactions"><span>📜</span> Transactions</a></li>
+        <li class="nav-item"><a href="account-details.html" class="nav-link" data-page="account-details"><span>ℹ️</span> Account Details</a></li>
+      </ul>
+      <div class="sidebar-footer">
+        <div class="user-badge">
+          <div class="user-avatar js-avatar-initial">J</div>
+          <div>
+            <div class="font-bold js-username">John</div>
+            <div class="text-muted" style="font-size: 11px;">Customer</div>
+          </div>
+        </div>
+        <button id="btn-logout" class="btn-logout">Sign Out</button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="main-wrapper">
+      <header class="top-bar">
+        <div>
+          <h2>Account Dashboard</h2>
+          <p class="text-muted" style="margin-bottom: 0;">Welcome back, <strong class="js-username">John</strong></p>
+        </div>
+        <div>
+          <a href="accounts.html" class="btn btn-primary" style="font-size: 13px;">+ Open New Account</a>
+        </div>
+      </header>
+
+      <main class="page-content">
+        <!-- Message Container -->
+        <div id="status-message" class="alert" style="display: none;" role="alert"></div>
+
+        <!-- Metric Cards -->
+        <div class="grid-3" style="margin-bottom: 24px;">
+          <div class="stat-card">
+            <span class="stat-label">Total Liquid Balance</span>
+            <span class="stat-value" id="total-balance">₹0.00</span>
+            <span class="stat-sub">Across all active accounts</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Primary Account</span>
+            <span class="stat-value" id="primary-account-no" style="font-size: 1.25rem;">—</span>
+            <span class="stat-sub" id="primary-account-type">No active account</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Total Accounts</span>
+            <span class="stat-value" id="accounts-count">0</span>
+            <span class="stat-sub">Active Savings & Current</span>
+          </div>
+        </div>
+
+        <!-- Accounts Overview Card -->
+        <div class="card">
+          <div class="card-header">
+            <h3>My Bank Accounts</h3>
+            <a href="accounts.html" class="text-muted" style="font-size: 13px;">Open another account &rarr;</a>
+          </div>
+          <div id="accounts-container" class="table-responsive">
+            <div style="text-align: center; padding: 20px;" class="text-muted">Loading your accounts...</div>
+          </div>
+        </div>
+
+        <!-- Recent Transactions Card -->
+        <div class="card">
+          <div class="card-header">
+            <h3>Recent Activity (Latest 5 Transactions)</h3>
+            <a href="transactions.html" class="text-muted" style="font-size: 13px;">View full statement &rarr;</a>
+          </div>
+          <div id="recent-tx-container" class="table-responsive">
+            <div style="text-align: center; padding: 20px;" class="text-muted">Select an account to view transactions.</div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/navigation.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>

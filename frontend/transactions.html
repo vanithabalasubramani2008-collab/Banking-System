@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SecureBank — Transaction History</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div id="demo-banner" class="demo-banner"></div>
+
+  <div class="mobile-header">
+    <div class="brand-logo">
+      <span class="brand-icon">🏦</span>
+      <span>SecureBank</span>
+    </div>
+    <button id="menu-toggle" class="menu-toggle">☰</button>
+  </div>
+
+  <div class="app-container">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="brand-logo">
+          <span class="brand-icon">🏦</span>
+          <span>SecureBank</span>
+        </div>
+      </div>
+      <ul class="nav-menu">
+        <li class="nav-item"><a href="dashboard.html" class="nav-link" data-page="dashboard"><span>📊</span> Dashboard</a></li>
+        <li class="nav-item"><a href="accounts.html" class="nav-link" data-page="accounts"><span>📑</span> Open Account</a></li>
+        <li class="nav-item"><a href="deposit.html" class="nav-link" data-page="deposit"><span>📥</span> Deposit</a></li>
+        <li class="nav-item"><a href="withdraw.html" class="nav-link" data-page="withdraw"><span>📤</span> Withdraw</a></li>
+        <li class="nav-item"><a href="transfer.html" class="nav-link" data-page="transfer"><span>🔄</span> Transfer Funds</a></li>
+        <li class="nav-item"><a href="transactions.html" class="nav-link" data-page="transactions"><span>📜</span> Transactions</a></li>
+        <li class="nav-item"><a href="account-details.html" class="nav-link" data-page="account-details"><span>ℹ️</span> Account Details</a></li>
+      </ul>
+      <div class="sidebar-footer">
+        <div class="user-badge">
+          <div class="user-avatar js-avatar-initial">J</div>
+          <div>
+            <div class="font-bold js-username">John</div>
+            <div class="text-muted" style="font-size: 11px;">Customer</div>
+          </div>
+        </div>
+        <button id="btn-logout" class="btn-logout">Sign Out</button>
+      </div>
+    </aside>
+
+    <div class="main-wrapper">
+      <header class="top-bar">
+        <div>
+          <h2>Transaction History & Statement</h2>
+          <p class="text-muted" style="margin-bottom: 0;">Comprehensive audit history of deposits, withdrawals, transfers, and interest</p>
+        </div>
+      </header>
+
+      <main class="page-content">
+        <div id="status-message" class="alert" style="display: none;" role="alert"></div>
+
+        <div class="card" style="margin-bottom: 20px;">
+          <div style="display: flex; gap: 16px; align-items: flex-end; flex-wrap: wrap;">
+            <div class="form-group" style="margin-bottom: 0; min-width: 250px; flex-grow: 1;">
+              <label for="account-select" class="form-label">Select Account</label>
+              <select id="account-select" class="form-control">
+                <option value="">Loading accounts...</option>
+              </select>
+            </div>
+            <div class="form-group" style="margin-bottom: 0; min-width: 150px;">
+              <label for="tx-filter" class="form-label">Filter By Type</label>
+              <select id="tx-filter" class="form-control">
+                <option value="ALL">All Transactions</option>
+                <option value="DEPOSIT">Deposits</option>
+                <option value="WITHDRAWAL">Withdrawals</option>
+                <option value="TRANSFER">Transfers</option>
+                <option value="INTEREST">Interest Credits</option>
+              </select>
+            </div>
+            <button id="btn-refresh" class="btn btn-outline" style="height: 42px;">Refresh</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3>Account Statement & Ledger</h3>
+            <span id="tx-count" class="badge badge-savings">0 Records</span>
+          </div>
+          <div id="transactions-container" class="table-responsive">
+            <div style="text-align: center; padding: 30px;" class="text-muted">Loading transaction statement...</div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/navigation.js"></script>
+  <script src="js/transactions.js"></script>
+</body>
+</html>
