@@ -328,3 +328,9 @@ The project has no platform-specific deployment files or selected hosting provid
 5. In `frontend/js/config.js`, set the API base to the deployed backend's HTTPS origin (or have the frontend host inject `window.SECUREBANK_API_BASE_URL` before the shared config is loaded). The default origins are local-development-only.
 
 The `prod` profile requires DB credentials, a JWT secret, and CORS origins, validates rather than modifies the schema, disables SQL logging, and uses TLS identity verification by default. Local development keeps `ddl-auto=update`; production schema changes must be reviewed and applied separately. The backend does not serve the standalone frontend, so `/` is not a public login page: serve `frontend/` separately and open its `index.html`. Banking APIs remain authenticated.
+
+### Deploy the Frontend to Vercel
+
+The root `vercel.json` sets Vercel's output directory to the existing `frontend/` folder, so the deployed site root serves the existing login page and its CSS, JavaScript, and HTML pages. In Vercel, connect this repository with the repository root as the project root and redeploy; no Node.js build step is required.
+
+This deploys only the static frontend. Vercel's Node.js runtime setting does not run the Spring Boot application or provide MySQL. The frontend's production API origin must be set to the HTTPS URL of a separately deployed Java backend in `frontend/js/config.js` (`window.SECUREBANK_API_BASE_URL` can override it when your hosting setup injects that value). Set the backend's `CORS_ALLOWED_ORIGINS` to the exact Vercel frontend origin. Until that backend URL is configured and the backend is deployed, the pages can load but login and banking API requests cannot succeed.
