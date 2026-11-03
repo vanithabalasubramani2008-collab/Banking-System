@@ -3,6 +3,7 @@ package com.securebank.integration;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.securebank.dto.*;
 import com.securebank.entity.AccountType;
+import com.securebank.security.JwtTokenProvider;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import java.math.BigDecimal;
 
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.options;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -32,6 +34,74 @@ class BankingSystemIntegrationTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private JwtTokenProvider tokenProvider;
+
+    @Test
+    @DisplayName("Security: Protected APIs reject missing, malformed, and stale tokens")
+    void protectedApisRejectInvalidTokens() throws Exception {
+        mockMvc.perform(get("/api/accounts"))
+                .andExpect(status().isUnauthorized());
+
+        mockMvc.perform(get("/api/accounts")
+                        .header("Authorization", "Bearer not-a-valid-jwt"))
+                .andExpect(status().isUnauthorized());
+
+        mockMvc.perform(get("/api/accounts")
+                        .header("Authorization", "Bearer " + tokenProvider.generateToken("deleted-user", "ROLE_CUSTOMER")))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @DisplayName("CORS: Only configured local frontend origins are allowed")
+    void corsRestrictsOrigins() throws Exception {
+        mockMvc.perform(options("/api/accounts")
+                        .header("Origin", "http://localhost:3000")
+                        .header("Access-Control-Request-Method", "GET"))
+                .andExpect(status().isOk())
+                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.header()
+                        .string("Access-Control-Allow-Origin", "http://localhost:3000"));
+
+        mockMvc.perform(options("/api/accounts")
+                        .header("Origin", "https://untrusted.example")
+                        .header("Access-Control-Request-Method", "GET"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @DisplayName("Authentication: A registered user can log in and access protected APIs")
+    void successfulLoginProvidesAccessToProtectedApi() throws Exception {
+        RegisterRequest registerRequest = new RegisterRequest(
+                "login_flow_user",
+                "login-flow@example.com",
+                "Password@123",
+                "1234",
+                "Login Flow",
+                "9876543210"
+        );
+        mockMvc.perform(post("/api/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(registerRequest)))
+                .andExpect(status().isCreated());
+
+        LoginRequest loginRequest = new LoginRequest("login_flow_user", "Password@123");
+        MvcResult loginResult = mockMvc.perform(post("/api/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(loginRequest)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.token").isNotEmpty())
+                .andReturn();
+
+        AuthResponse auth = objectMapper.readValue(
+                loginResult.getResponse().getContentAsString(),
+                AuthResponse.class
+        );
+        mockMvc.perform(get("/api/accounts")
+                        .header("Authorization", "Bearer " + auth.getToken()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(0)));
+    }
 
     @Test
     @DisplayName("End-to-End Banking Workflow: Register -> Open Accounts -> Deposit -> Withdraw -> Transfer -> Audit")

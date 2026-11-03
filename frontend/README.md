@@ -39,7 +39,7 @@ frontend/
 ├── css/
 │   └── style.css           # Responsive navy/slate design system, cards, tables, modal & alerts
 ├── js/
-│   ├── config.js           # API_BASE_URL (http://localhost:8080) & DEMO_MODE toggle
+│   ├── config.js           # Local API default, deploy-time API override & DEMO_MODE toggle
 │   ├── api.js              # Reusable Fetch API client, Bearer headers & error parser
 │   ├── auth.js             # Login submission and 3-attempt lock handling
 │   ├── navigation.js       # Session authentication guard and sidebar controller
@@ -56,14 +56,20 @@ frontend/
 ## 3. How to Run Frontend & Backend
 
 ### Step 1: Start the Spring Boot Backend
-From the root directory:
+From the repository root, configure the local MySQL credentials and a private JWT key (at least 32 bytes) in the same shell:
 ```powershell
+$env:DB_HOST="localhost"
+$env:DB_PORT="3306"
+$env:DB_NAME="securebank_db"
+$env:DB_USER="root"
+$env:DB_PASSWORD="<your-local-mysql-password>"
+$env:JWT_SECRET="<a-private-random-secret-at-least-32-bytes-long>"
 mvn spring-boot:run
 ```
-The backend starts on `http://localhost:8080`.
+The backend uses port 8080 by default, or the `PORT`/`SERVER_PORT` environment variable when supplied.
 
 ### Step 2: Serve the Frontend
-You can serve the `frontend/` directory using any local HTTP static server or simply open `index.html` directly in your browser.
+Serve the `frontend/` directory using a local HTTP static server. Using Python:
 
 Using Python (built into Windows/macOS/Linux):
 ```powershell
@@ -75,7 +81,9 @@ Open your browser at:
 http://localhost:3000
 ```
 
-Alternatively, open `file:///C:/Users/Vanitha/Desktop/Banking%20System/frontend/index.html` in Chrome or Edge.
+Do not open the page with `file://`; use HTTP so browser origin checks and API requests work as intended.
+
+The local frontend configuration targets `http://localhost:8080`. For a separately hosted frontend, set `window.SECUREBANK_API_BASE_URL` before the shared config loads or update the single `API_BASE_URL` value in `js/config.js` to the backend's HTTPS origin. Configure the backend's `CORS_ALLOWED_ORIGINS` to the exact frontend origin(s).
 
 ---
 
@@ -83,6 +91,8 @@ Alternatively, open `file:///C:/Users/Vanitha/Desktop/Banking%20System/frontend/
 
 - **Normal Mode (Default)**: `CONFIG.DEMO_MODE = false` in `js/config.js`. The application communicates directly with the live Spring Boot REST APIs and displays genuine database responses from MySQL.
 - **Explicit Demo Mode**: Set `CONFIG.DEMO_MODE = true` in `js/config.js` to visibly flag sample simulation mode. A banner appears at the top: `DEMO MODE — Sample Data Active`.
+
+The production backend configuration is documented in the repository [README](../README.md#production-deployment-configuration). Configure its `prod` profile and required database, JWT, and CORS environment variables in the hosting platform; do not put credentials in frontend files.
 
 ---
 

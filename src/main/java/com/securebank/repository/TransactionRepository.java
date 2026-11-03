@@ -13,6 +13,7 @@ import java.util.List;
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
 
     List<Transaction> findByAccountIdOrderByCreatedAtDesc(Long accountId);
+    long countByAccountId(Long accountId);
 
     @Query("SELECT t FROM Transaction t WHERE t.account.id = :accountId ORDER BY t.createdAt DESC")
     List<Transaction> findRecentTransactions(@Param("accountId") Long accountId, Pageable pageable);

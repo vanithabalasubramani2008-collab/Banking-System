@@ -4,6 +4,8 @@ import com.securebank.entity.AccountType;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Digits;
 import java.math.BigDecimal;
 
 public class CreateAccountRequest {
@@ -13,9 +15,11 @@ public class CreateAccountRequest {
 
     @NotNull(message = "Initial deposit amount is required")
     @DecimalMin(value = "0.0", inclusive = true, message = "Initial deposit cannot be negative")
+    @Digits(integer = 13, fraction = 2, message = "Initial deposit must have at most 13 integer and 2 fractional digits")
     private BigDecimal initialDeposit;
 
     @NotBlank(message = "PIN is required to authorize account opening")
+    @Pattern(regexp = "^[0-9]{4,6}$", message = "PIN must be a 4 to 6 digit numerical code")
     private String pin;
 
     public CreateAccountRequest() {

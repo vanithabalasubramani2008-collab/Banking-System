@@ -284,17 +284,47 @@ Handled by [`GlobalExceptionHandler`](file:///src/main/java/com/securebank/excep
 ```powershell
 mvn clean test
 ```
-All 10 tests (8 domain OOP tests + 2 complete integration tests) execute and pass with zero failures.
+All 12 tests (8 domain OOP tests + 4 API/security integration tests) execute with zero failures.
 
-### Configure MySQL & Run Application
-Set environment variables (or rely on defaults in `application.properties`):
+### Configure MySQL & Run Application Locally
+Create `securebank_db` using the supplied `src/main/resources/schema.sql` only for a new database. Do not run its table-creation statements against an existing database; Hibernate's local `update` setting preserves existing rows.
+
+Set the connection details and a private JWT key in the shell that will run Maven:
 ```powershell
 $env:DB_HOST="localhost"
 $env:DB_PORT="3306"
 $env:DB_NAME="securebank_db"
 $env:DB_USER="root"
-$env:DB_PASSWORD="your_password"
-$env:JWT_SECRET="YourVeryLongAndSecureKeyMustBeAtLeast32BytesLong!"
+$env:DB_PASSWORD="<your-local-mysql-password>"
+$env:JWT_SECRET="<a-private-random-secret-at-least-32-bytes-long>"
 
 mvn spring-boot:run
 ```
+
+`DB_PASSWORD` and `JWT_SECRET` are required; do not commit their values. If the local MySQL account has no password, set `DB_PASSWORD` to an empty string. The backend binds to `PORT`, then `SERVER_PORT`, then `8080`. If port 8080 is already serving this application, reuse it rather than starting a duplicate; inspect any other port owner before stopping it.
+
+### Production Deployment Configuration
+
+The project has no platform-specific deployment files or selected hosting provider. Deploy the executable JAR to a Java 17-compatible service and provision a MySQL database first. For platforms exposing a `PORT` variable, the app binds to it automatically.
+
+1. Create the production database and apply the existing schema through the database provider's safe migration/import process. Do not point production at local/test data.
+2. Set `SPRING_PROFILES_ACTIVE=prod`.
+3. Configure these environment variables in the hosting platform's secret/configuration manager:
+
+   | Variable | Required value |
+   |---|---|
+   | `DB_HOST` | Database hostname |
+   | `DB_PORT` | Database port (defaults to `3306`) |
+   | `DB_NAME` | Existing database name |
+   | `DB_USER` | Least-privilege database user |
+   | `DB_PASSWORD` | Database password |
+   | `DB_SSL_MODE` | MySQL Connector/J mode; production defaults to `VERIFY_IDENTITY` |
+   | `JWT_SECRET` | Private random secret of at least 32 UTF-8 bytes |
+   | `JWT_EXPIRATION_MS` | Optional token lifetime in milliseconds |
+   | `CORS_ALLOWED_ORIGINS` | Comma-separated, exact HTTPS frontend origins, without paths |
+
+   Example shapes only: `DB_HOST=<mysql-host>`, `JWT_SECRET=<private-random-32-byte-or-longer-value>`, `CORS_ALLOWED_ORIGINS=https://<your-frontend-host>`. Never use these placeholders literally. The database certificate and hostname must be valid for `VERIFY_IDENTITY`; configure the provider's recommended SSL mode if it uses a different trust setup.
+4. Build and deploy with `mvn clean package`; run `java -jar target/banking-system-1.0.0-SNAPSHOT.jar`.
+5. In `frontend/js/config.js`, set the API base to the deployed backend's HTTPS origin (or have the frontend host inject `window.SECUREBANK_API_BASE_URL` before the shared config is loaded). The default origins are local-development-only.
+
+The `prod` profile requires DB credentials, a JWT secret, and CORS origins, validates rather than modifies the schema, disables SQL logging, and uses TLS identity verification by default. Local development keeps `ddl-auto=update`; production schema changes must be reviewed and applied separately. The backend does not serve the standalone frontend, so `/` is not a public login page: serve `frontend/` separately and open its `index.html`. Banking APIs remain authenticated.

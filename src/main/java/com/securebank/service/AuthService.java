@@ -62,7 +62,7 @@ public class AuthService {
 
     @Transactional(noRollbackFor = {BadCredentialsException.class, AccountLockedException.class})
     public AuthResponse login(LoginRequest request) {
-        Optional<User> userOpt = userRepository.findByUsername(request.getUsername());
+        Optional<User> userOpt = userRepository.findByUsernameWithLock(request.getUsername());
         if (userOpt.isEmpty()) {
             throw new BadCredentialsException("Invalid username or password");
         }

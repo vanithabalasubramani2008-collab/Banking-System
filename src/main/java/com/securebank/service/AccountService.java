@@ -104,7 +104,7 @@ public class AccountService {
         Account account = findAccountById(accountId);
         verifyOwnership(account, username);
 
-        int maxLimit = (limit > 0) ? limit : 5;
+        int maxLimit = limit > 0 ? Math.min(limit, 100) : 5;
         return transactionRepository.findRecentTransactions(accountId, PageRequest.of(0, maxLimit))
                 .stream()
                 .map(this::mapToTransactionResponse)
@@ -121,12 +121,10 @@ public class AccountService {
                 .map(this::mapToTransactionResponse)
                 .collect(Collectors.toList());
 
-        List<Transaction> allTxs = transactionRepository.findByAccountIdOrderByCreatedAtDesc(accountId);
-
         return new AccountStatementResponse(
                 mapToAccountResponse(account),
                 recent,
-                allTxs.size()
+                transactionRepository.countByAccountId(accountId)
         );
     }
 

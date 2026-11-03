@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.Locale;
 import java.util.UUID;
 
 @Service
@@ -111,7 +112,9 @@ public class TransactionService {
      */
     @Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     public TransactionResponse transfer(TransferRequest request, String username) {
-        if (request.getSourceAccountNumber().equalsIgnoreCase(request.getDestinationAccountNumber())) {
+        String sourceAccountNumber = request.getSourceAccountNumber().toUpperCase(Locale.ROOT);
+        String destinationAccountNumber = request.getDestinationAccountNumber().toUpperCase(Locale.ROOT);
+        if (sourceAccountNumber.equals(destinationAccountNumber)) {
             throw new InvalidTransactionException("Source and destination accounts cannot be identical");
         }
 
@@ -119,12 +122,12 @@ public class TransactionService {
         authService.verifyPin(user, request.getPin());
 
         // Deadlock Prevention: Always acquire locks in canonical (alphanumeric) order
-        String firstAccNo = request.getSourceAccountNumber().compareTo(request.getDestinationAccountNumber()) < 0
-                ? request.getSourceAccountNumber()
-                : request.getDestinationAccountNumber();
-        String secondAccNo = firstAccNo.equals(request.getSourceAccountNumber())
-                ? request.getDestinationAccountNumber()
-                : request.getSourceAccountNumber();
+        String firstAccNo = sourceAccountNumber.compareTo(destinationAccountNumber) < 0
+                ? sourceAccountNumber
+                : destinationAccountNumber;
+        String secondAccNo = firstAccNo.equals(sourceAccountNumber)
+                ? destinationAccountNumber
+                : sourceAccountNumber;
 
         Account lockedFirst = accountRepository.findByAccountNumberWithLock(firstAccNo)
                 .orElseThrow(() -> new AccountNotFoundException("Account " + firstAccNo + " not found"));
@@ -132,9 +135,9 @@ public class TransactionService {
         Account lockedSecond = accountRepository.findByAccountNumberWithLock(secondAccNo)
                 .orElseThrow(() -> new AccountNotFoundException("Account " + secondAccNo + " not found"));
 
-        Account sourceAccount = lockedFirst.getAccountNumber().equalsIgnoreCase(request.getSourceAccountNumber())
+        Account sourceAccount = lockedFirst.getAccountNumber().equals(sourceAccountNumber)
                 ? lockedFirst : lockedSecond;
-        Account destinationAccount = lockedFirst.getAccountNumber().equalsIgnoreCase(request.getDestinationAccountNumber())
+        Account destinationAccount = lockedFirst.getAccountNumber().equals(destinationAccountNumber)
                 ? lockedFirst : lockedSecond;
 
         // Verify that the authenticated caller owns the source account

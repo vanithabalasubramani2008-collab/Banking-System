@@ -6,12 +6,12 @@ public class AccountStatementResponse {
 
     private AccountResponse account;
     private List<TransactionResponse> recentTransactions;
-    private int totalTransactionsCount;
+    private long totalTransactionsCount;
 
     public AccountStatementResponse() {
     }
 
-    public AccountStatementResponse(AccountResponse account, List<TransactionResponse> recentTransactions, int totalTransactionsCount) {
+    public AccountStatementResponse(AccountResponse account, List<TransactionResponse> recentTransactions, long totalTransactionsCount) {
         this.account = account;
         this.recentTransactions = recentTransactions;
         this.totalTransactionsCount = totalTransactionsCount;
@@ -33,11 +33,11 @@ public class AccountStatementResponse {
         this.recentTransactions = recentTransactions;
     }
 
-    public int getTotalTransactionsCount() {
+    public long getTotalTransactionsCount() {
         return totalTransactionsCount;
     }
 
-    public void setTotalTransactionsCount(int totalTransactionsCount) {
+    public void setTotalTransactionsCount(long totalTransactionsCount) {
         this.totalTransactionsCount = totalTransactionsCount;
     }
 }

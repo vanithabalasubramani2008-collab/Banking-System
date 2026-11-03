@@ -18,8 +18,11 @@ public class JwtTokenProvider {
     private final long validityInMilliseconds;
 
     public JwtTokenProvider(
-            @Value("${app.jwt.secret:SecureBankVerySecretSuperSafeKeyForJWTTokenSigningAndVerification32BytesLong!}") String secret,
-            @Value("${app.jwt.expiration-ms:86400000}") long validityInMilliseconds) {
+            @Value("${app.jwt.secret}") String secret,
+            @Value("${app.jwt.expiration-ms}") long validityInMilliseconds) {
+        if (validityInMilliseconds <= 0) {
+            throw new IllegalArgumentException("JWT expiration must be greater than zero");
+        }
         this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
         this.validityInMilliseconds = validityInMilliseconds;
     }
